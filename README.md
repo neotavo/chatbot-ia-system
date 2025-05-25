@@ -13,9 +13,32 @@
       - Elegir: Modo nativo / Región: us-central1 / Confirmar
       <img width="1423" alt="Screenshot 2025-05-25 at 6 23 11 PM" src="https://github.com/user-attachments/assets/cd837799-2094-41ef-aba9-82c0ddf4174b" />
 
+3. Crear colección: businesses
+      - En la consola de Firestore.
+      - Click en "Iniciar colección"
+      - ID colección: businesses
+      - ID documento: demo-business
+      - Agregar los siguientes campos:
+        | Campo                | Tipo       | Valor                                    |
+        | -------------------- | ---------- | ---------------------------------------- |
+        | nombre\_negocio      | string     | Clínica BellaVida                        |
+        | rubro                | string     | clínica estética                         |
+        | descripcion          | string     | Tratamientos faciales y depilación láser |
+        | horario\_atencion    | mapa (map) | Ver valores abajo                        |
+        | feriados\_especiales | array      | `["2025-12-25", "2026-01-01"]`           |
 
+      - Dentro de horario_atencion agrega:
+        | Clave     | Valor       |
+        | --------- | ----------- |
+        | lunes     | 09:00-18:00 |
+        | martes    | 09:00-18:00 |
+        | miércoles | 09:00-18:00 |
+        | jueves    | 09:00-18:00 |
+        | viernes   | 09:00-18:00 |
+        | sábado    | Cerrado     |
+        | domingo   | Cerrado     |
 
-3. 
+      
   
 4.  
 5. 
