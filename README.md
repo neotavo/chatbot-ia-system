@@ -8,16 +8,22 @@
       - Nombre: chatbot-dev
       - Ubicación: tu organización o cuenta personal
       <img width="385" alt="Screenshot 2025-05-25 at 6 05 01 PM" src="https://github.com/user-attachments/assets/8d1059fe-852f-47cb-8674-4597c5ae1bbb" /> 
-2. skjidfv
-  dfnvkdjfv
+2. Activado Firestore en modo nativo, región: `us-central1`
+      - En la consola GCP, ir a: Menú principal > Firestore > Crear base de datos
+      - Elegir: Modo nativo / Región: us-central1 / Confirmar
+      <img width="1423" alt="Screenshot 2025-05-25 at 6 23 11 PM" src="https://github.com/user-attachments/assets/cd837799-2094-41ef-aba9-82c0ddf4174b" />
+
+
+
+3. 
   
-3.  
-4. 
+4.  
 5. 
+6. 
       ✅ PARTE 1 – Crear proyecto y Firestore
       
   
-- [x] Activado Firestore en modo nativo, región: `us-central1`
+
 - [x] Instalado Google Cloud SDK
 - [x] Instalado VSCode y extensiones
 - [x] Estructura inicial del proyecto
