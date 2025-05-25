@@ -1,7 +1,15 @@
 # MVP BOT IA – GCP
 
 ## Día 1 (25 de mayo) – Configuración inicial
-- [x] Creado proyecto GCP: `chatbot-dev`
+# Crear proyecto GCP (chatbot-dev)
+1. Crear proyeto en GCP
+      - Ve a https://console.cloud.google.com/
+2. skjidfv
+  dfnvkdjfv
+  
+3.  
+4. 
+5. 
       ✅ PARTE 1 – Crear proyecto y Firestore
       A. Crear proyecto en GCP
         1. Ve a https://console.cloud.google.com/
@@ -19,6 +27,10 @@ Espera a que se cree (~30 segundos)
 - [x] Instalado Google Cloud SDK
 - [x] Instalado VSCode y extensiones
 - [x] Estructura inicial del proyecto
+
+---------------
+---------------
+## Día 2 – 
 
 
 # Load CDC data from MySQL to BigQuery with Pub/Sub (Apache Kafka)
