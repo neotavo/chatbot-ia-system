@@ -57,9 +57,30 @@ openai
 python-dotenv
 
 ```
+📌 python-dotenv se usará para cargar claves desde un archivo .env.
+2. Crear archivo .env (NO lo subas a GitHub)
+- En el terminal hay que ir tu folder del proyecto:
+```bash
+cd ~/ruta/del/proyecto/chatbot-ia-system
 
+```
+- Ejecutar el siguiente comando:
+```bash
+cat <<EOF > .env
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxx
+GOOGLE_PROJECT_ID=chatbot-dev
+BUSINESS_ID=demo-business
+EOF
 
-2.  
+```
+⚠️ Reemplaza OPENAI_API_KEY con tu clave real de OpenAI.
+- Verifica su contenido:
+```bash
+cat .env
+
+```
+
+  
 5. 
 6. 
       ✅ PARTE 1 – Crear proyecto y Firestore
