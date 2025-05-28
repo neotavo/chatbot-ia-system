@@ -37,6 +37,8 @@
         | viernes   | 09:00-18:00 |
         | sábado    | Cerrado     |
         | domingo   | Cerrado     |
+        <img width="1173" alt="Screenshot 2025-05-27 at 10 08 29 PM" src="https://github.com/user-attachments/assets/f13ae6ec-1090-4027-b9b4-502d32eb3d62" />
+
 
 # Backend mínimo funcional
 Estructura esperada
