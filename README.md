@@ -174,8 +174,19 @@ pip install -r requirements.txt
 uvicorn backend.main:app --reload --port 8080
 
 ```
+Luego abre en tu navegador:
+👉 http://localhost:8080/docs
 
+Ahí puedes probar el endpoint /preguntar.
 
+Ejemplo de JSON de prueba:
+```json
+{
+  "cliente_id": "jose@gmail.com",
+  "texto": "¿Atienden el 1 de mayo?"
+}
+
+```
 5. 
 
 
