@@ -167,15 +167,24 @@ Respuesta base: {contexto}
 
 ```
 
-4. 
+4. Probar localmente (sin Docker)
+- Desde terminal, en la raíz del proyecto:
+```bash
+pip install -r requirements.txt
+uvicorn backend.main:app --reload --port 8080
+
+```
+
+
+5. 
 
 
 
 
 
   
-5. 
 6. 
+7. 
       ✅ PARTE 1 – Crear proyecto y Firestore
       
   
