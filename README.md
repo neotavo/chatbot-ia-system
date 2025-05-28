@@ -48,7 +48,7 @@ chatbot-ia-system/
 
 ```
 1.  Archivo requirements.txt (nivel raíz)
-Debe tener estos archivos
+Debe tener estos archivos:
 ```txt
 fastapi
 uvicorn
@@ -59,7 +59,7 @@ python-dotenv
 ```
 📌 python-dotenv se usará para cargar claves desde un archivo .env.
 2. Crear archivo .env (NO lo subas a GitHub)
-- En el terminal hay que ir tu folder del proyecto:
+- En el terminal hay que ir al folder del proyecto:
 ```bash
 cd ~/ruta/del/proyecto/chatbot-ia-system
 
@@ -79,6 +79,99 @@ EOF
 cat .env
 
 ```
+3. Crear main.py en backend/
+- Código paso a paso:
+```python
+# backend/main.py
+
+import os
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
+from google.cloud import firestore
+import openai
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
+
+# Configuración de claves
+openai.api_key = os.getenv("OPENAI_API_KEY")
+project_id = os.getenv("GOOGLE_PROJECT_ID")
+business_id = os.getenv("BUSINESS_ID")
+
+# Inicializar Firestore
+db = firestore.Client(project=project_id)
+
+# App de FastAPI
+app = FastAPI()
+
+# Modelo para solicitudes POST
+class Pregunta(BaseModel):
+    cliente_id: str
+    texto: str
+
+# Ruta de prueba
+@app.get("/")
+def home():
+    return {"mensaje": "API de bot IA funcionando"}
+
+# Ruta para preguntas
+@app.post("/preguntar")
+def preguntar(pregunta: Pregunta):
+    cliente_id = pregunta.cliente_id
+    texto = pregunta.texto
+
+    # Obtener información del negocio
+    negocio_ref = db.collection("businesses").document(business_id)
+    negocio = negocio_ref.get().to_dict()
+
+    # Buscar si ya hay respuesta guardada
+    respuestas_ref = negocio_ref.collection("respuestas")
+    respuesta_doc = respuestas_ref.document(texto.lower().strip().replace(" ", "_")).get()
+
+    if respuesta_doc.exists:
+        respuesta_guardada = respuesta_doc.to_dict().get("respuesta_usuario")
+        contexto = respuesta_guardada
+    else:
+        contexto = "Actualmente no tengo una respuesta registrada para esta pregunta."
+
+        # Guardar como pendiente
+        pendientes_ref = negocio_ref.collection("pendientes")
+        pendientes_ref.add({
+            "pregunta_cliente": texto,
+            "cliente_id": cliente_id
+        })
+
+    # Crear prompt para ChatGPT
+    prompt = f"""
+Eres un asistente virtual para el negocio {negocio['nombre_negocio']} del rubro {negocio['rubro']}.
+Actúa de manera profesional. Usa esta información del negocio: {negocio['descripcion']}.
+Pregunta del cliente: {texto}
+Respuesta base: {contexto}
+    """
+
+    # Llamada a OpenAI
+    respuesta = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.7
+    )
+
+    respuesta_final = respuesta["choices"][0]["message"]["content"]
+
+    return {
+        "cliente_id": cliente_id,
+        "respuesta": respuesta_final
+    }
+
+
+```
+
+4. 
+
+
+
+
 
   
 5. 
