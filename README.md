@@ -170,12 +170,24 @@ Respuesta base: {contexto}
 ```
 
 4. Probar localmente (sin Docker)
-- Desde terminal, en la raíz del proyecto:
+- Ejecutar el **módulo `venv`** de Python para crear un **entorno virtual aislado**:
 ```bash
+python3 -m venv venv
+source venv/bin/activate
+
+```
+- Reinstalar dependencias:
+```bash
+pip install --upgrade pip setuptools
 pip install -r requirements.txt
+
+```
+- Ejecutar el servidor con FastAPI:
+```bash
 uvicorn backend.main:app --reload --port 8080
 
 ```
+
 Luego abre en tu navegador:
 👉 http://localhost:8080/docs
 
@@ -189,6 +201,8 @@ Ejemplo de JSON de prueba:
 }
 
 ```
+
+
 5. 
 
 
