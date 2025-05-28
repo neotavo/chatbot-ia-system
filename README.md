@@ -38,7 +38,21 @@
         | sábado    | Cerrado     |
         | domingo   | Cerrado     |
 
-      
+# Backend mínimo funcional
+1. Crear proyeto en GCP
+```css
+chatbot-ia-system/
+├── backend/
+│   └── main.py   ✅ lo crearemos ahora
+├── requirements.txt ✅ ya lo tienes o lo creamos
+
+
+```
+
+      - Ve a https://console.cloud.google.com/
+      - Arriba haz clic en "Seleccionar proyecto" > "Nuevo proyecto"
+      - Nombre: chatbot-dev
+      - Ubicación: tu organización o cuenta personal      
   
 4.  
 5. 
