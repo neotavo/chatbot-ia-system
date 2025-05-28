@@ -39,22 +39,27 @@
         | domingo   | Cerrado     |
 
 # Backend mínimo funcional
-1. Crear proyeto en GCP
+Estructura esperada
 ```css
 chatbot-ia-system/
 ├── backend/
-│   └── main.py   ✅ lo crearemos ahora
-├── requirements.txt ✅ ya lo tienes o lo creamos
+│   └── main.py
+├── requirements.txt 
 
+```
+1.  Archivo requirements.txt (nivel raíz)
+Debe tener estos archivos
+```txt
+fastapi
+uvicorn
+google-cloud-firestore
+openai
+python-dotenv
 
 ```
 
-      - Ve a https://console.cloud.google.com/
-      - Arriba haz clic en "Seleccionar proyecto" > "Nuevo proyecto"
-      - Nombre: chatbot-dev
-      - Ubicación: tu organización o cuenta personal      
-  
-4.  
+
+2.  
 5. 
 6. 
       ✅ PARTE 1 – Crear proyecto y Firestore
