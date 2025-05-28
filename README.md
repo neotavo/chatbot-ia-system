@@ -170,13 +170,13 @@ Respuesta base: {contexto}
 ```
 
 4. Probar localmente (sin Docker)
-- Ejecutar el **módulo `venv`** de Python para crear un **entorno virtual aislado**:
+- Ejecutar el **módulo `venv`** de Python para crear un **entorno virtual aislado** (si funciona FastAPI no ejecutar):
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 
 ```
-- Reinstalar dependencias:
+- Reinstalar dependencias (si funciona FastAPI no ejecutar):
 ```bash
 pip install --upgrade pip setuptools
 pip install -r requirements.txt
