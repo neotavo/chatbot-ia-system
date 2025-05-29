@@ -86,86 +86,76 @@ cat .env
 ```python
 # backend/main.py
 
-import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from google.cloud import firestore
-import openai
-from dotenv import load_dotenv
+from openai import OpenAI
+import os
 
-# Cargar variables de entorno desde .env
-load_dotenv()
+# Inicializar cliente de Firestore
+db = firestore.Client()
 
-# Configuración de claves
-openai.api_key = os.getenv("OPENAI_API_KEY")
-project_id = os.getenv("GOOGLE_PROJECT_ID")
-business_id = os.getenv("BUSINESS_ID")
+# Inicializar cliente de OpenAI
+client = OpenAI()
 
-# Inicializar Firestore
-db = firestore.Client(project=project_id)
-
-# App de FastAPI
+# FastAPI app
 app = FastAPI()
 
-# Modelo para solicitudes POST
+# Modelo de entrada
 class Pregunta(BaseModel):
     cliente_id: str
     texto: str
 
-# Ruta de prueba
-@app.get("/")
-def home():
-    return {"mensaje": "API de bot IA funcionando"}
-
-# Ruta para preguntas
 @app.post("/preguntar")
 def preguntar(pregunta: Pregunta):
-    cliente_id = pregunta.cliente_id
-    texto = pregunta.texto
-
-    # Obtener información del negocio
-    negocio_ref = db.collection("businesses").document(business_id)
+    # Paso 1: Buscar negocio en Firestore
+    negocio_ref = db.collection("negocios").document("mi_negocio")
     negocio = negocio_ref.get().to_dict()
+    if not negocio:
+        raise HTTPException(status_code=404, detail="Negocio no encontrado")
 
-    # Buscar si ya hay respuesta guardada
-    respuestas_ref = negocio_ref.collection("respuestas")
-    respuesta_doc = respuestas_ref.document(texto.lower().strip().replace(" ", "_")).get()
+    # Paso 2: Buscar si la pregunta ya existe (pregunta normalizada opcional)
+    preguntas_ref = negocio_ref.collection("preguntas")
+    consulta = preguntas_ref.where("texto", "==", pregunta.texto).limit(1).stream()
+    pregunta_existente = next(consulta, None)
 
-    if respuesta_doc.exists:
-        respuesta_guardada = respuesta_doc.to_dict().get("respuesta_usuario")
-        contexto = respuesta_guardada
-    else:
-        contexto = "Actualmente no tengo una respuesta registrada para esta pregunta."
+    if pregunta_existente:
+        datos = pregunta_existente.to_dict()
+        return {
+            "respuesta": datos["respuesta"],
+            "origen": "firestore"
+        }
 
-        # Guardar como pendiente
-        pendientes_ref = negocio_ref.collection("pendientes")
-        pendientes_ref.add({
-            "pregunta_cliente": texto,
-            "cliente_id": cliente_id
-        })
-
-    # Crear prompt para ChatGPT
+    # Paso 3: Generar prompt personalizado
     prompt = f"""
-Eres un asistente virtual para el negocio {negocio['nombre_negocio']} del rubro {negocio['rubro']}.
-Actúa de manera profesional. Usa esta información del negocio: {negocio['descripcion']}.
-Pregunta del cliente: {texto}
-Respuesta base: {contexto}
-    """
+Eres el asistente del negocio '{negocio['nombre']}'.
+Tu tarea es responder preguntas sobre horarios, servicios, ubicación y más.
+Pregunta del cliente: "{pregunta.texto}"
+Responde con información clara y amable.
+"""
 
-    # Llamada a OpenAI
-    respuesta = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7
-    )
+    # Paso 4: Consultar a OpenAI
+    try:
+        respuesta = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7
+        )
+        respuesta_final = respuesta.choices[0].message.content
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al consultar OpenAI: {e}")
 
-    respuesta_final = respuesta["choices"][0]["message"]["content"]
+    # Paso 5: Guardar la nueva pregunta y respuesta en Firestore
+    preguntas_ref.add({
+        "cliente_id": pregunta.cliente_id,
+        "texto": pregunta.texto,
+        "respuesta": respuesta_final
+    })
 
     return {
-        "cliente_id": cliente_id,
-        "respuesta": respuesta_final
+        "respuesta": respuesta_final,
+        "origen": "openai"
     }
-
 
 ```
 
