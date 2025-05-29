@@ -214,6 +214,42 @@ gcloud auth application-default login
 
 ```
 <img width="1348" alt="Screenshot 2025-05-28 at 9 46 34 PM" src="https://github.com/user-attachments/assets/c9924a7f-18bd-4e7c-8b44-f90176c1f2a7" />
+- Asegúrate de estar autenticado con el usuario correcto (Verifica que el usuario activo (*) sea el correcto (el que tiene acceso al proyecto GCP chatbot-dev).
+```bash
+gcloud auth list
+
+```
+- Si no lo es, cambia con:
+```bash
+gcloud auth login
+
+```
+- Confirma que el proyecto correcto está activo:
+```bash
+gcloud config list
+
+```
+- Si el proyecto chatbot-dev no aparece, configúralo así:
+```bash
+gcloud config set project chatbot-dev-460922
+
+```
+- Otorga permisos al SDK para acceder a Firestore:
+  - Reemplaza "gdacggcp7@gmail.com" por tu correo real (el que usaste con gcloud auth login).
+  - Este permiso (roles/datastore.user) permite leer/escribir en Firestore.     
+```bash
+gcloud projects add-iam-policy-binding chatbot-dev-460922 \
+  --member="user:gdacggcp7@gmail.com" \
+  --role="roles/datastore.user"
+
+```
+
+- 
+- 
+- 
+
+
+
 
 - Reinicia tu backend:
 ```bash
