@@ -70,7 +70,7 @@ cd ~/ruta/del/proyecto/chatbot-ia-system
 ```bash
 cat <<EOF > .env
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxx
-GOOGLE_PROJECT_ID=chatbot-dev
+GOOGLE_PROJECT_ID=chatbot-dev-460922
 BUSINESS_ID=demo-business
 EOF
 
