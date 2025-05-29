@@ -214,12 +214,17 @@ gcloud auth application-default login
 
 ```
 <img width="1348" alt="Screenshot 2025-05-28 at 9 46 34 PM" src="https://github.com/user-attachments/assets/c9924a7f-18bd-4e7c-8b44-f90176c1f2a7" />
-🔥 ¡Esto es lo que Firestore necesita para funcionar desde tu entorno local!
+
 - Reinicia tu backend:
 ```bash
 uvicorn backend.main:app --reload --port 8080
 
 ```
+
+Luego abre en tu navegador:
+👉 http://localhost:8080/docs
+
+Ahí puedes probar el endpoint /preguntar.
 
 
 - jvhgvhgvvhg
