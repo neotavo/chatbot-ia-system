@@ -201,17 +201,39 @@ Ejemplo de JSON de prueba:
 }
 
 ```
+5. Solución si no funciona correctamente
+- En el terminal ejecuta:
+```bash
+gcloud auth application-default login
+
+```
+- Esto abrirá tu navegador y te pedirá que inicies sesión con tu cuenta de Google (la que tiene acceso a tu proyecto GCP).
+- Luego, Google creará un archivo de credenciales en:
+```bash
+~/.config/gcloud/application_default_credentials.json
+
+```
+<img width="1348" alt="Screenshot 2025-05-28 at 9 46 34 PM" src="https://github.com/user-attachments/assets/c9924a7f-18bd-4e7c-8b44-f90176c1f2a7" />
+🔥 ¡Esto es lo que Firestore necesita para funcionar desde tu entorno local!
+- Reinicia tu backend:
+```bash
+uvicorn backend.main:app --reload --port 8080
+
+```
 
 
-5. 
+
+- 
+
+6. 
 
 
 
 
 
   
-6. 
 7. 
+8. 
       ✅ PARTE 1 – Crear proyecto y Firestore
       
   
