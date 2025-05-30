@@ -92,31 +92,25 @@ from google.cloud import firestore
 from openai import OpenAI
 import os
 
-# Inicializar cliente de Firestore
 db = firestore.Client()
-
-# Inicializar cliente de OpenAI
-client = OpenAI()  # Asegúrate de tener OPENAI_API_KEY configurado como variable de entorno
-
-# FastAPI app
+client = OpenAI()
 app = FastAPI()
 
-# Modelo de entrada
 class Pregunta(BaseModel):
-    cliente_id: str
+    negocio_id: str
     texto: str
 
 @app.post("/preguntar")
 def preguntar(pregunta: Pregunta):
-    # Paso 1: Buscar negocio en Firestore usando el cliente_id
-    negocio_ref = db.collection("negocios").document(pregunta.cliente_id)
+    # Buscar el negocio según el ID
+    negocio_ref = db.collection("businesses").document(pregunta.negocio_id)
     doc = negocio_ref.get()
     if not doc.exists:
         raise HTTPException(status_code=404, detail="Negocio no encontrado")
     
     negocio = doc.to_dict()
 
-    # Paso 2: Buscar si la pregunta ya existe en subcolección "preguntas"
+    # Revisar si la pregunta ya existe
     preguntas_ref = negocio_ref.collection("preguntas")
     consulta = preguntas_ref.where("texto", "==", pregunta.texto).limit(1).stream()
     pregunta_existente = next(consulta, None)
@@ -128,7 +122,7 @@ def preguntar(pregunta: Pregunta):
             "origen": "firestore"
         }
 
-    # Paso 3: Generar prompt dinámico con información del negocio
+    # Construir el prompt con los datos del negocio
     horario = negocio.get("horario_atencion", {})
     feriados = negocio.get("feriados_especiales", [])
     prompt = f"""
@@ -144,7 +138,7 @@ Cliente pregunta: "{pregunta.texto}"
 Responde con amabilidad y precisión. Si el día consultado es feriado, informa que el negocio está cerrado.
 """
 
-    # Paso 4: Consultar a OpenAI para obtener respuesta
+    # Consultar a OpenAI
     try:
         respuesta = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -155,9 +149,8 @@ Responde con amabilidad y precisión. Si el día consultado es feriado, informa 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al consultar OpenAI: {e}")
 
-    # Paso 5: Guardar la nueva pregunta y respuesta en Firestore
+    # Guardar en Firestore
     preguntas_ref.add({
-        "cliente_id": pregunta.cliente_id,
         "texto": pregunta.texto,
         "respuesta": respuesta_final
     })
@@ -181,8 +174,6 @@ source venv/bin/activate
 pip install --upgrade pip setuptools
 pip install -r requirements.txt
 
-export OPENAI_API_KEY="tu-clave-secreta-de-openai"
-
 ```
 ```bash
 export OPENAI_API_KEY="tu-clave-secreta-de-openai"
@@ -202,8 +193,8 @@ Ahí puedes probar el endpoint /preguntar.
 Ejemplo de JSON de prueba:
 ```json
 {
-  "cliente_id": "clinicabellavida@gmail.com",
-  "texto": "¿Están abiertos el 25 de diciembre?"
+  "negocio_id": "demo-business",
+  "texto": "¿Atienden el 1 de enero?"
 }
 
 ```
