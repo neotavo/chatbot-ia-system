@@ -181,6 +181,12 @@ source venv/bin/activate
 pip install --upgrade pip setuptools
 pip install -r requirements.txt
 
+export OPENAI_API_KEY="tu-clave-secreta-de-openai"
+
+```
+```bash
+export OPENAI_API_KEY="tu-clave-secreta-de-openai"
+
 ```
 - Ejecutar el servidor con FastAPI:
 ```bash
