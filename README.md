@@ -96,7 +96,7 @@ import os
 db = firestore.Client()
 
 # Inicializar cliente de OpenAI
-client = OpenAI()
+client = OpenAI()  # Asegúrate de tener OPENAI_API_KEY configurado como variable de entorno
 
 # FastAPI app
 app = FastAPI()
@@ -108,13 +108,15 @@ class Pregunta(BaseModel):
 
 @app.post("/preguntar")
 def preguntar(pregunta: Pregunta):
-    # Paso 1: Buscar negocio en Firestore
-    negocio_ref = db.collection("negocios").document("mi_negocio")
-    negocio = negocio_ref.get().to_dict()
-    if not negocio:
+    # Paso 1: Buscar negocio en Firestore usando el cliente_id
+    negocio_ref = db.collection("negocios").document(pregunta.cliente_id)
+    doc = negocio_ref.get()
+    if not doc.exists:
         raise HTTPException(status_code=404, detail="Negocio no encontrado")
+    
+    negocio = doc.to_dict()
 
-    # Paso 2: Buscar si la pregunta ya existe (pregunta normalizada opcional)
+    # Paso 2: Buscar si la pregunta ya existe en subcolección "preguntas"
     preguntas_ref = negocio_ref.collection("preguntas")
     consulta = preguntas_ref.where("texto", "==", pregunta.texto).limit(1).stream()
     pregunta_existente = next(consulta, None)
@@ -126,15 +128,23 @@ def preguntar(pregunta: Pregunta):
             "origen": "firestore"
         }
 
-    # Paso 3: Generar prompt personalizado
+    # Paso 3: Generar prompt dinámico con información del negocio
+    horario = negocio.get("horario_atencion", {})
+    feriados = negocio.get("feriados_especiales", [])
     prompt = f"""
-Eres el asistente del negocio '{negocio['nombre']}'.
-Tu tarea es responder preguntas sobre horarios, servicios, ubicación y más.
-Pregunta del cliente: "{pregunta.texto}"
-Responde con información clara y amable.
+Eres el asistente virtual del negocio '{negocio['nombre_negocio']}'.
+Este negocio se dedica a: {negocio['descripcion']} ({negocio['rubro']}).
+
+Horario de atención semanal:
+{chr(10).join([f"{dia}: {hora}" for dia, hora in horario.items()])}
+Feriados especiales donde está cerrado: {', '.join(feriados)}
+
+Cliente pregunta: "{pregunta.texto}"
+
+Responde con amabilidad y precisión. Si el día consultado es feriado, informa que el negocio está cerrado.
 """
 
-    # Paso 4: Consultar a OpenAI
+    # Paso 4: Consultar a OpenAI para obtener respuesta
     try:
         respuesta = client.chat.completions.create(
             model="gpt-3.5-turbo",
