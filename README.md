@@ -196,8 +196,8 @@ Ahí puedes probar el endpoint /preguntar.
 Ejemplo de JSON de prueba:
 ```json
 {
-  "cliente_id": "jose@gmail.com",
-  "texto": "¿Atienden el 1 de mayo?"
+  "cliente_id": "clinicabellavida@gmail.com",
+  "texto": "¿Están abiertos el 25 de diciembre?"
 }
 
 ```
