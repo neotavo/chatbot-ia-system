@@ -9,9 +9,83 @@
       - Un código de verificación para que asocies tu WhatsApp (ej: join tough-hill)
       - En tu teléfono envía ese mensaje al número para vincularlo temporalmente.
 
+## PASO 2: Prepara tu backend FastAPI para recibir mensajes de WhatsApp
+1. Crea un endpoint /webhook en FastAPI:
+```python
+# backend/main.py
+
+from fastapi import FastAPI, Request
+from fastapi.responses import PlainTextResponse
+from google.cloud import firestore
+from openai import OpenAI
+from twilio.rest import Client as TwilioClient
+import os
+
+app = FastAPI()
+
+# Inicializar Firestore y OpenAI
+db = firestore.Client()
+openai_client = OpenAI()
+twilio_client = TwilioClient(os.environ["TWILIO_SID"], os.environ["TWILIO_TOKEN"])
+
+@app.post("/webhook")
+async def whatsapp_webhook(request: Request):
+    form = await request.form()
+    mensaje = form.get("Body")
+    telefono = form.get("From")  # Ej: 'whatsapp:+56912345678'
+
+    # Por ahora, todo apunta al negocio demo
+    negocio_id = "demo-business"
+    doc = db.collection("negocios").document(negocio_id).get()
+    if not doc.exists:
+        return PlainTextResponse("Negocio no encontrado", status_code=404)
+
+    contexto = doc.to_dict()
+    prompt = f"{contexto.get('mensaje_bienvenida', '')}\n\nCliente: {mensaje}"
+
+    # Llamar a ChatGPT
+    respuesta = openai_client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": contexto.get("instrucciones", "Eres un asistente del negocio.")},
+            {"role": "user", "content": prompt},
+        ]
+    )
+
+    respuesta_texto = respuesta.choices[0].message.content
+
+    # Enviar respuesta por WhatsApp
+    twilio_client.messages.create(
+        body=respuesta_texto,
+        from_='whatsapp:+14155238886',  # Número sandbox de Twilio
+        to=telefono
+    )
+
+    return PlainTextResponse("OK", status_code=200)
+
+```
+2. Crear archivo .env (variables de entorno). Agregar las siguientes lineas.
+```ini
+TWILIO_SID=tu_sid_de_twilio
+TWILIO_TOKEN=tu_token_de_twilio
+
+```
+Correr lo siguiente para probar:
+```bash
+export TWILIO_SID=tu_sid_de_twilio
+export TWILIO_TOKEN=tu_token_de_twilio
+
+```
 
 -----------------------------------------------
 -----------------------------------------------
+
+4. Entra a la sección “Sandbox for WhatsApp”: https://www.twilio.com/console/sms/whatsapp/sandbox
+5. Twilio te dará:
+      - Un número de prueba (+1415...)
+      - Un código de verificación para que asocies tu WhatsApp (ej: join tough-hill)
+      - En tu teléfono envía ese mensaje al número para vincularlo temporalmente.
+
 
 2. Activado Firestore en modo nativo, región: `us-central1`
       - En la consola GCP, ir a: Menú principal > Firestore > Crear base de datos
