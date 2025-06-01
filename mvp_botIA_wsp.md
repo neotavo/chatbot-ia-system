@@ -76,6 +76,12 @@ export TWILIO_SID=tu_sid_de_twilio
 export TWILIO_TOKEN=tu_token_de_twilio
 
 ```
+3.- Ejecutar el módulo venv de Python para crear un entorno virtual aislado (si funciona FastAPI no ejecutar):
+```bash
+export TWILIO_SID=tu_sid_de_twilio
+export TWILIO_TOKEN=tu_token_de_twilio
+
+```
 
 -----------------------------------------------
 -----------------------------------------------
