@@ -14,6 +14,8 @@
 ```python
 # backend/main.py
 
+# backend/main.py
+
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from google.cloud import firestore
@@ -62,6 +64,7 @@ async def whatsapp_webhook(request: Request):
     )
 
     return PlainTextResponse("OK", status_code=200)
+
 
 ```
 2. Crear archivo .env (variables de entorno). Agregar las siguientes lineas.
