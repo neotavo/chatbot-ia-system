@@ -82,6 +82,27 @@ python3 -m venv venv
 source venv/bin/activate
 
 ```
+4.- Desde tu terminal, activa el entorno virtual en la carpeta del proyecto::
+```bash
+source venv/bin/activate
+
+```
+5.- Instala Twilio:
+```bash
+pip install twilio
+
+```
+6.- (Opcional) Agrega también las demás dependencias, por si no están:
+```bash
+pip install fastapi uvicorn openai python-multipart google-cloud-firestore
+
+```
+7.- (Opcional pero recomendado) Guarda las dependencias en requirements.txt:
+```bash
+pip freeze > requirements.txt
+
+```
+
 
 -----------------------------------------------
 -----------------------------------------------
